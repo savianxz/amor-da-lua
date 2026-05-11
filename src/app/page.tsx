@@ -2,202 +2,200 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ChevronDown, Shield, Star } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ChevronDown, Shield, Star, Sparkles, CheckCircle2, Lock, ArrowRight, Eye, Moon } from "lucide-react";
 
-/* ══════════════════════════════════════════════════════════════════════
-   SUB-COMPONENTS
-══════════════════════════════════════════════════════════════════════ */
+/* ── Components ─────────────────────────────────────────────────── */
 
 function Badge({ children }: { children: React.ReactNode }) {
   return (
-    <span
-      style={{
-        display: "inline-flex",
-        alignItems: "center",
-        padding: "6px 14px",
-        borderRadius: "999px",
-        border: "1px solid rgba(224,184,76,0.25)",
-        background: "rgba(224,184,76,0.07)",
-        fontFamily: "'Inter', sans-serif",
-        fontSize: "11px",
-        fontWeight: 500,
-        letterSpacing: "0.18em",
-        textTransform: "uppercase",
-        color: "#E0B84C",
-      }}
+    <motion.span
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="inline-flex items-center px-4 py-1.5 rounded-full border border-[#E0B84C]/20 bg-[#E0B84C]/5 text-[#E0B84C] text-[10px] font-medium tracking-[0.2em] uppercase font-sans mb-6"
     >
       {children}
-    </span>
+    </motion.span>
   );
 }
 
 function Stars({ count = 5 }: { count?: number }) {
   return (
-    <div style={{ display: "flex", gap: "2px" }}>
+    <div className="flex gap-1">
       {Array.from({ length: count }).map((_, i) => (
-        <Star key={i} style={{ width: 14, height: 14, fill: "#E0B84C", color: "#E0B84C" }} />
+        <Star key={i} className="w-3 h-3 fill-[#E0B84C] text-[#E0B84C]" />
       ))}
     </div>
   );
 }
 
-function HowCard({ num, text }: { num: number; text: string }) {
+function SectionHeading({ title, subtitle, centered = true }: { title: string; subtitle?: string; centered?: boolean }) {
   return (
-    <div
-      className="card card-hover"
-      style={{ padding: "36px 28px", display: "flex", flexDirection: "column", gap: "16px" }}
-    >
-      <div
-        style={{
-          width: 40, height: 40, borderRadius: "50%",
-          border: "1px solid rgba(224,184,76,0.3)",
-          display: "flex", alignItems: "center", justifyContent: "center",
-          fontFamily: "'Playfair Display', serif",
-          fontSize: 16, color: "#E0B84C",
-          flexShrink: 0,
-        }}
+    <div className={`mb-16 ${centered ? 'text-center' : 'text-left'}`}>
+      <motion.h2 
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="text-3xl md:text-5xl font-serif text-[#FFF8E7] mb-6 leading-tight"
       >
-        {num}
-      </div>
-      <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 15, fontWeight: 300, lineHeight: 1.65, color: "rgba(255,248,231,0.82)" }}>
-        {text}
-      </p>
+        {title}
+      </motion.h2>
+      <div className={`h-[1px] w-12 bg-[#E0B84C]/30 mb-6 ${centered ? 'mx-auto' : ''}`} />
+      {subtitle && (
+        <motion.p 
+          initial={{ opacity: 0, y: 10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.2 }}
+          className="text-[#FFF8E7]/50 text-lg font-light max-w-2xl mx-auto"
+        >
+          {subtitle}
+        </motion.p>
+      )}
     </div>
   );
 }
 
-function TestimonialCard({ quote, name, location }: { quote: string; name: string; location: string }) {
+function HowCard({ num, title, text, delay = 0 }: { num: number; title: string; text: string; delay?: number }) {
   return (
-    <div className="card card-hover" style={{ padding: "32px 28px", display: "flex", flexDirection: "column", gap: "20px" }}>
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ delay }}
+      className="group p-10 rounded-[32px] bg-[#1C1024] border border-[#2A1834] hover:border-[#E0B84C]/20 transition-all duration-500 relative overflow-hidden"
+    >
+      <div className="absolute top-0 right-0 p-6 text-6xl font-serif text-[#E0B84C]/5 italic group-hover:text-[#E0B84C]/10 transition-colors">
+        0{num}
+      </div>
+      <div className="w-12 h-12 rounded-2xl bg-[#E0B84C]/10 flex items-center justify-center text-[#E0B84C] font-serif text-xl mb-8 border border-[#E0B84C]/20">
+        {num}
+      </div>
+      <h4 className="text-xl font-serif text-[#E0B84C] mb-4 tracking-wide">{title}</h4>
+      <p className="text-[#FFF8E7]/60 font-light leading-relaxed text-sm">
+        {text}
+      </p>
+    </motion.div>
+  );
+}
+
+function TestimonialCard({ quote, name, location, delay = 0 }: { quote: string; name: string; location: string; delay?: number }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ delay }}
+      className="p-10 rounded-[32px] bg-[#1C1024] border border-[#2A1834] flex flex-col gap-8 relative"
+    >
       <Stars />
-      <p style={{
-        fontFamily: "'Inter', sans-serif", fontStyle: "italic",
-        fontSize: 15, fontWeight: 300, lineHeight: 1.75,
-        color: "rgba(255,248,231,0.80)",
-      }}>
+      <p className="text-[#FFF8E7]/80 italic font-serif text-lg leading-relaxed">
         "{quote}"
       </p>
-      <div style={{ borderTop: "1px solid rgba(224,184,76,0.12)", paddingTop: 16 }}>
-        <p style={{ fontFamily: "'Playfair Display', serif", fontSize: 13, color: "#E0B84C", letterSpacing: "0.08em" }}>{name}</p>
-        <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 11, color: "rgba(255,248,231,0.35)", marginTop: 2 }}>{location}</p>
+      <div className="pt-6 border-t border-[#FFF8E7]/5 flex items-center justify-between">
+        <div>
+          <p className="text-[#E0B84C] font-serif text-sm tracking-widest uppercase">{name}</p>
+          <p className="text-[#FFF8E7]/30 text-[10px] mt-1 uppercase tracking-tighter">{location}</p>
+        </div>
+        <CheckCircle2 className="w-5 h-5 text-[#E0B84C]/20" />
       </div>
-    </div>
+    </motion.div>
   );
 }
 
 function FAQItem({ q, a }: { q: string; a: string }) {
   const [open, setOpen] = useState(false);
   return (
-    <div
-      style={{
-        borderBottom: "1px solid rgba(224,184,76,0.10)",
-        paddingBottom: open ? 20 : 0,
-        marginBottom: 0,
-      }}
-    >
+    <div className="border-b border-[#E0B84C]/5 overflow-hidden">
       <button
         onClick={() => setOpen(!open)}
-        style={{
-          width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center",
-          padding: "22px 0", background: "none", border: "none", cursor: "pointer",
-          textAlign: "left", gap: 16,
-        }}
+        className="w-full flex justify-between items-center py-8 bg-transparent border-none cursor-pointer text-left group"
       >
-        <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 17, color: "#FFF8E7", fontWeight: 400 }}>
+        <span className="text-lg md:text-xl font-serif text-[#FFF8E7]/90 group-hover:text-[#E0B84C] transition-colors pr-8">
           {q}
         </span>
         <ChevronDown
-          style={{
-            width: 18, height: 18, color: "#E0B84C", flexShrink: 0,
-            transition: "transform 0.25s",
-            transform: open ? "rotate(180deg)" : "rotate(0deg)",
-          }}
+          className={`w-5 h-5 text-[#E0B84C] transition-transform duration-500 ${open ? "rotate-180" : "rotate-0"}`}
         />
       </button>
-      {open && (
-        <p className="faq-answer" style={{
-          fontFamily: "'Inter', sans-serif", fontSize: 15, fontWeight: 300,
-          lineHeight: 1.75, color: "rgba(255,248,231,0.65)", paddingBottom: 4,
-        }}>
-          {a}
-        </p>
-      )}
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <p className="pb-8 text-[#FFF8E7]/50 font-light leading-relaxed text-base">
+              {a}
+            </p>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
 
-/* ══════════════════════════════════════════════════════════════════════
-   TAROT CARDS VISUAL
-══════════════════════════════════════════════════════════════════════ */
+/* ── Visual Scenes ──────────────────────────────────────────────── */
+
 function TarotScene() {
   return (
-    <div style={{ position: "relative", width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
-      {/* Subtle ambient glow — just one, not overwhelming */}
-      <div style={{
-        position: "absolute", width: 260, height: 340,
-        background: "radial-gradient(ellipse, rgba(224,184,76,0.10) 0%, transparent 70%)",
-        borderRadius: "50%", filter: "blur(30px)", pointerEvents: "none",
-      }} />
-
-      {/* Card 1 — back left */}
-      <div
-        className="tarot tarot-1"
-        style={{
-          width: 150, height: 250,
-          top: "50%", left: "50%",
-          marginTop: -125, marginLeft: -190,
-          zIndex: 10,
-          boxShadow: "0 20px 60px rgba(0,0,0,0.55)",
-          opacity: 0.82,
+    <div className="relative w-full h-[400px] md:h-[500px] flex items-center justify-center pointer-events-none">
+      <div className="absolute w-64 h-80 bg-[#E0B84C]/5 blur-[80px] rounded-full animate-pulse" />
+      
+      {/* Card 1 */}
+      <motion.div
+        animate={{ 
+          y: [0, -15, 0],
+          rotate: [-8, -6, -8]
         }}
+        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute w-40 h-64 md:w-48 md:h-72 bg-[#1C1024] border border-[#E0B84C]/20 rounded-2xl shadow-2xl z-10 -translate-x-32 md:-translate-x-40 flex flex-col items-center justify-center"
       >
-        <div style={{ fontSize: 38 }}>🌙</div>
-        <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 11, color: "#E0B84C", letterSpacing: "0.2em", textTransform: "uppercase" }}>
-          O Oculto
-        </span>
-      </div>
+        <div className="absolute inset-2 border border-[#E0B84C]/5 rounded-xl" />
+        <div className="flex flex-col items-center justify-center gap-4 opacity-40">
+            <Moon className="w-8 h-8 text-[#E0B84C]" />
+            <span className="text-[8px] tracking-[0.4em] uppercase font-serif text-[#E0B84C]">O Oculto</span>
+        </div>
+      </motion.div>
 
-      {/* Card 2 — front center (largest) */}
-      <div
-        className="tarot tarot-2"
-        style={{
-          width: 168, height: 278,
-          top: "50%", left: "50%",
-          marginTop: -139, marginLeft: -84,
-          zIndex: 30,
-          boxShadow: "0 24px 70px rgba(0,0,0,0.65), 0 0 40px rgba(224,184,76,0.12)",
+      {/* Card 2 */}
+      <motion.div
+        animate={{ 
+          y: [-10, 5, -10],
+          rotate: [0, 1, 0]
         }}
+        transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+        className="absolute w-44 h-72 md:w-56 md:h-80 bg-gradient-to-br from-[#1C1024] to-[#120817] border border-[#E0B84C]/40 rounded-2xl shadow-[0_30px_70px_rgba(0,0,0,0.6)] z-30 flex flex-col items-center justify-center"
       >
-        <div style={{ fontSize: 44 }}>✨</div>
-        <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 11, color: "#E0B84C", letterSpacing: "0.2em", textTransform: "uppercase" }}>
-          A Conexão
-        </span>
-      </div>
+        <div className="absolute inset-2 border border-[#E0B84C]/20 rounded-xl" />
+        <div className="flex flex-col items-center justify-center gap-6">
+            <Sparkles className="w-12 h-12 text-[#E0B84C] drop-shadow-[0_0_15px_rgba(224,184,76,0.5)]" />
+            <span className="text-[10px] tracking-[0.5em] uppercase font-serif text-[#E0B84C] font-bold">A Conexão</span>
+        </div>
+      </motion.div>
 
-      {/* Card 3 — back right */}
-      <div
-        className="tarot tarot-3"
-        style={{
-          width: 148, height: 246,
-          top: "50%", left: "50%",
-          marginTop: -123, marginLeft: 24,
-          zIndex: 20,
-          boxShadow: "0 20px 60px rgba(0,0,0,0.55)",
-          opacity: 0.80,
+      {/* Card 3 */}
+      <motion.div
+        animate={{ 
+          y: [0, -12, 0],
+          rotate: [8, 10, 8]
         }}
+        transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+        className="absolute w-40 h-64 md:w-48 md:h-72 bg-[#1C1024] border border-[#E0B84C]/20 rounded-2xl shadow-2xl z-20 translate-x-32 md:translate-x-40 flex flex-col items-center justify-center"
       >
-        <div style={{ fontSize: 38 }}>👁️</div>
-        <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 11, color: "#E0B84C", letterSpacing: "0.2em", textTransform: "uppercase" }}>
-          O Destino
-        </span>
-      </div>
+        <div className="absolute inset-2 border border-[#E0B84C]/5 rounded-xl" />
+        <div className="flex flex-col items-center justify-center gap-4 opacity-40">
+            <Eye className="w-8 h-8 text-[#E0B84C]" />
+            <span className="text-[8px] tracking-[0.4em] uppercase font-serif text-[#E0B84C]">O Destino</span>
+        </div>
+      </motion.div>
     </div>
   );
 }
 
-/* ══════════════════════════════════════════════════════════════════════
-   MAIN PAGE
-══════════════════════════════════════════════════════════════════════ */
+/* ── Main Page ──────────────────────────────────────────────────── */
+
 export default function HomePage() {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
@@ -205,261 +203,276 @@ export default function HomePage() {
 
   useEffect(() => { setMounted(true); }, []);
 
-  const scrollToOferta = () =>
-    ofertaRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-
   if (!mounted) return null;
 
   return (
-    <main style={{ background: "#120817", minHeight: "100vh", overflowX: "hidden" }}>
+    <main className="bg-[#120817] min-h-screen text-[#FFF8E7] selection:bg-[#E0B84C]/30 selection:text-[#FFF8E7] overflow-x-hidden">
+      
+      {/* ── Ambient Background ── */}
+      <div className="fixed inset-0 pointer-events-none z-0">
+        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-[#E0B84C]/5 blur-[150px] -translate-y-1/2 translate-x-1/3" />
+        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-[#7A1F4B]/5 blur-[150px] translate-y-1/3 -translate-x-1/4" />
+      </div>
 
-      {/* ════════════════════════════════════════
-          SEÇÃO 1 — HERO
-      ════════════════════════════════════════ */}
-      <section style={{ minHeight: "100svh", display: "flex", alignItems: "center", padding: "80px 0 60px" }}>
-        <div className="container" style={{ width: "100%" }}>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "64px", alignItems: "center" }}>
-
-            {/* LEFT */}
-            <div className="fade-up" style={{ display: "flex", flexDirection: "column", gap: 0 }}>
-              <div style={{ marginBottom: 24 }}>
-                <Badge>Consulta Privada de Reconexão</Badge>
-              </div>
-
-              <h1
-                className="font-serif"
-                style={{
-                  fontSize: "clamp(28px, 3.2vw, 42px)",
-                  fontWeight: 400,
-                  lineHeight: 1.22,
-                  color: "#FFF8E7",
-                  marginBottom: 24,
-                }}
-              >
-                Ele realmente te esqueceu...<br />
-                ou ainda existe uma<br />
+      {/* ── Section 1: Hero ── */}
+      <section className="relative min-h-screen flex items-center pt-24 pb-16">
+        <div className="container mx-auto px-6 z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            
+            <motion.div 
+                initial={{ opacity: 0, x: -30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8, ease: "easeOut" }}
+                className="max-w-2xl"
+            >
+              <Badge>Acesso Restrito: Leitura Espiritual</Badge>
+              
+              <h1 className="text-4xl md:text-6xl lg:text-7xl font-serif text-[#FFF8E7] mb-8 leading-[1.1]">
+                Ele realmente te esqueceu... <br className="hidden md:block" /> 
+                ou ainda existe uma <br className="hidden md:block" />
                 <span className="gold-text">conexão não encerrada?</span>
               </h1>
 
-              <p
-                style={{
-                  fontFamily: "'Inter', sans-serif",
-                  fontSize: 16, fontWeight: 300,
-                  lineHeight: 1.75, color: "rgba(255,248,231,0.72)",
-                  marginBottom: 36, maxWidth: 440,
-                }}
-              >
-                Existe algo que ele ainda sente e talvez nem consiga admitir.
-                Sua leitura revela se essa conexão ainda pode ser reativada.
+              <p className="text-lg md:text-xl font-light text-[#FFF8E7]/60 leading-relaxed mb-12 max-w-lg">
+                Existe algo que ele ainda sente e talvez nem consiga admitir para si mesmo. 
+                Sua leitura de Tarot revela o campo vibracional exato entre vocês hoje.
               </p>
 
-              <button className="btn-cta" style={{ maxWidth: 400, marginBottom: 14 }} onClick={() => router.push("/tiragem")}>
-                Quero Ver Minha Leitura Agora
-              </button>
-
-              <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 12, color: "rgba(255,248,231,0.38)", letterSpacing: "0.06em", marginBottom: 24 }}>
-                Consulta sigilosa&nbsp;&nbsp;•&nbsp;&nbsp;Resultado imediato
-              </p>
-
-              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                <Stars />
-                <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 13, color: "rgba(255,248,231,0.70)" }}>
-                  327 leituras realizadas recentemente
-                </span>
+              <div className="flex flex-col sm:flex-row items-center gap-6 mb-12">
+                <motion.button 
+                    whileHover={{ scale: 1.05, boxShadow: "0 0 50px rgba(224, 184, 76, 0.4)" }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => router.push("/tiragem")}
+                    className="bg-[#E0B84C] text-[#120817] px-10 py-6 rounded-full text-lg font-bold tracking-tight shadow-2xl transition-all duration-500 w-full sm:w-auto uppercase"
+                >
+                  Ver Minha Leitura Agora
+                </motion.button>
+                <div className="flex flex-col items-center sm:items-start">
+                    <div className="flex items-center gap-2 mb-1">
+                        <Stars />
+                        <span className="text-[#FFF8E7] text-xs font-bold tracking-widest">4.9/5</span>
+                    </div>
+                    <p className="text-[#FFF8E7]/30 text-[10px] uppercase tracking-widest">Baseado em +1.200 consulentes</p>
+                </div>
               </div>
-            </div>
 
-            {/* RIGHT — Tarot Cards */}
-            <div className="fade-up-2" style={{ position: "relative", height: 400 }}>
-              <TarotScene />
-            </div>
-
-          </div>
-        </div>
-      </section>
-
-      {/* ════════════════════════════════════════
-          SEÇÃO 2 — COMO FUNCIONA
-      ════════════════════════════════════════ */}
-      <section className="section" style={{ background: "#1C1024" }}>
-        <div className="container">
-          <div style={{ textAlign: "center", marginBottom: 56 }}>
-            <h2 className="font-serif" style={{ fontSize: "clamp(24px, 2.6vw, 34px)", fontWeight: 400, color: "#FFF8E7", marginBottom: 12 }}>
-              Como Sua Leitura Acontece
-            </h2>
-            <div className="divider" />
-          </div>
-
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20 }}>
-            <HowCard num={1} text="Você responde 3 perguntas rápidas sobre a conexão e o momento que viveu juntos." />
-            <HowCard num={2} text="As cartas revelam o estado emocional atual da conexão e o que ele carrega internamente." />
-            <HowCard num={3} text="Você descobre o próximo passo ideal para agir com clareza, sem desperdício emocional." />
-          </div>
-        </div>
-      </section>
-
-      {/* ════════════════════════════════════════
-          SEÇÃO 3 — DEPOIMENTOS
-      ════════════════════════════════════════ */}
-      <section className="section">
-        <div className="container">
-          <div style={{ textAlign: "center", marginBottom: 56 }}>
-            <h2 className="font-serif" style={{ fontSize: "clamp(24px, 2.6vw, 34px)", fontWeight: 400, color: "#FFF8E7", marginBottom: 12 }}>
-              Relatos Reais
-            </h2>
-            <div className="divider" />
-          </div>
-
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20 }}>
-            <TestimonialCard
-              quote="A leitura me trouxe clareza sobre o afastamento e me ajudou a agir com mais consciência. Parei de mandar mensagens desnecessárias e a dinâmica mudou."
-              name="Isabella V."
-              location="São Paulo"
-            />
-            <TestimonialCard
-              quote="Eu esperava algo genérico, mas foi surpreendentemente preciso. A carta central descreveu exatamente o silêncio que ele estava impondo."
-              name="Carolina M."
-              location="Rio de Janeiro"
-            />
-            <TestimonialCard
-              quote="Não sei explicar racionalmente, mas aquela semana eu segui o direcionamento e ele entrou em contato. Estou grata pela coragem que a leitura me deu."
-              name="Marina S."
-              location="Belo Horizonte"
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* ════════════════════════════════════════
-          SEÇÃO 4 — OFERTA
-      ════════════════════════════════════════ */}
-      <section className="section" ref={ofertaRef} id="oferta-mapa" style={{ background: "#1C1024" }}>
-        <div className="container-sm">
-          <div style={{ textAlign: "center", marginBottom: 48 }}>
-            <h2 className="font-serif" style={{ fontSize: "clamp(24px, 2.6vw, 36px)", fontWeight: 400, color: "#FFF8E7", marginBottom: 12 }}>
-              Seu Mapa dos 21 Dias
-            </h2>
-            <div className="divider" />
-            <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 15, fontWeight: 300, color: "rgba(255,248,231,0.60)", marginTop: 16 }}>
-              Tudo que você precisa para agir com estratégia e presença.
-            </p>
-          </div>
-
-          <div className="card" style={{ padding: "44px 48px" }}>
-            {/* Features list */}
-            <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: 16, marginBottom: 40 }}>
-              {[
-                "Diagnóstico emocional da conexão atual",
-                "Janela de reconexão — o momento certo para agir",
-                "Os erros que aumentam o afastamento",
-                "Estratégia personalizada de aproximação",
-                "Direcionamento prático para os próximos 21 dias",
-              ].map((item, i) => (
-                <li key={i} style={{ display: "flex", alignItems: "flex-start", gap: 14 }}>
-                  <span style={{
-                    color: "#E0B84C", fontFamily: "'Inter', sans-serif",
-                    fontWeight: 600, fontSize: 15, flexShrink: 0, marginTop: 1,
-                  }}>✓</span>
-                  <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 15, fontWeight: 300, color: "rgba(255,248,231,0.82)", lineHeight: 1.55 }}>
-                    {item}
-                  </span>
-                </li>
-              ))}
-            </ul>
-
-            {/* Price + CTA */}
-            <div style={{ borderTop: "1px solid rgba(224,184,76,0.12)", paddingTop: 36 }}>
-              <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 6 }}>
-                <span className="font-serif" style={{ fontSize: 42, color: "#E0B84C", fontWeight: 500 }}>R$&nbsp;97</span>
-                <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 13, color: "rgba(255,248,231,0.38)", textDecoration: "line-through" }}>R$ 197</span>
+              <div className="flex items-center gap-4 text-[#FFF8E7]/30">
+                <Lock className="w-4 h-4" />
+                <span className="text-[10px] uppercase tracking-[0.2em]">Sua sessão é sigilosa e privada</span>
               </div>
-              <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 12, color: "rgba(255,248,231,0.40)", letterSpacing: "0.04em", marginBottom: 28 }}>
-                Pagamento único · Acesso vitalício
-              </p>
-              <button className="btn-cta" onClick={() => router.push("/checkout")}>
-                Receber Meu Mapa
-              </button>
-              <p style={{
-                fontFamily: "'Inter', sans-serif", fontSize: 11, textAlign: "center",
-                color: "rgba(255,248,231,0.32)", marginTop: 14, letterSpacing: "0.04em",
-              }}>
-                Disponível apenas durante esta sessão
-              </p>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, marginTop: 20 }}>
-                <Shield style={{ width: 13, height: 13, color: "rgba(255,248,231,0.35)" }} />
-                <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 11, color: "rgba(255,248,231,0.35)" }}>
-                  Garantia incondicional de 30 dias
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+            </motion.div>
 
-      {/* ════════════════════════════════════════
-          SEÇÃO 5 — FAQ
-      ════════════════════════════════════════ */}
-      <section className="section">
-        <div className="container-sm">
-          <div style={{ textAlign: "center", marginBottom: 52 }}>
-            <h2 className="font-serif" style={{ fontSize: "clamp(22px, 2.4vw, 32px)", fontWeight: 400, color: "#FFF8E7", marginBottom: 12 }}>
-              Dúvidas Frequentes
-            </h2>
-            <div className="divider" />
-          </div>
-
-          <div>
-            <FAQItem
-              q="A consulta é realmente gratuita?"
-              a="Sim. A leitura inicial das três cartas é completamente gratuita e imediata. Você só decide sobre o Mapa dos 21 Dias após receber sua leitura."
-            />
-            <FAQItem
-              q="Preciso ter conhecimento de tarot?"
-              a="Não. Você responde apenas três perguntas simples. Nossa leitura é apresentada de forma clara, objetiva e sem jargões."
-            />
-            <FAQItem
-              q="Em quanto tempo recebo meu Mapa?"
-              a="Assim que a compra é confirmada, você recebe acesso imediato ao PDF completo do Mapa dos 21 Dias no seu e-mail."
-            />
-            <FAQItem
-              q="Funciona mesmo para casos difíceis?"
-              a="A leitura oferece clareza emocional e direcionamento estratégico independente do estágio do afastamento. Não prometemos resultados específicos, mas oferecemos uma perspectiva que a maioria das mulheres ainda não tem."
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* ════════════════════════════════════════
-          FOOTER
-      ════════════════════════════════════════ */}
-      <footer style={{
-        borderTop: "1px solid rgba(224,184,76,0.08)",
-        padding: "40px 24px",
-        textAlign: "center",
-      }}>
-        <p className="font-serif" style={{ fontSize: 18, color: "rgba(255,248,231,0.18)", marginBottom: 20 }}>
-          Amor da Lua
-        </p>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 20, flexWrap: "wrap" }}>
-          {["Privacidade", "Termos de Uso", "Contato"].map((item, i) => (
-            <a key={i} href="#" style={{
-              fontFamily: "'Inter', sans-serif", fontSize: 11,
-              letterSpacing: "0.1em", textTransform: "uppercase",
-              color: "rgba(255,248,231,0.22)",
-              textDecoration: "none", transition: "color 0.2s",
-            }}
-              onMouseEnter={e => (e.currentTarget.style.color = "rgba(224,184,76,0.55)")}
-              onMouseLeave={e => (e.currentTarget.style.color = "rgba(255,248,231,0.22)")}
+            <motion.div 
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 1.2, delay: 0.2 }}
+                className="hidden lg:block relative"
             >
-              {item}
-            </a>
-          ))}
+              <TarotScene />
+            </motion.div>
+          </div>
         </div>
-        <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 10, color: "rgba(255,248,231,0.14)", marginTop: 20, letterSpacing: "0.06em" }}>
-          © 2024 Amor da Lua · Todos os direitos reservados
-        </p>
+      </section>
+
+      {/* ── Section 2: Como Funciona ── */}
+      <section className="py-32 relative bg-[#1C1024]/40 border-y border-[#E0B84C]/5">
+        <div className="container mx-auto px-6">
+          <SectionHeading 
+            title="Como sua jornada de clareza acontece"
+            subtitle="Uma experiência desenhada para traduzir o invisível em direcionamento prático."
+          />
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <HowCard 
+              num={1} 
+              title="A Conexão" 
+              text="Você escolhe 3 cartas que estão sintonizadas com o campo energético que vocês compartilham hoje."
+              delay={0.1}
+            />
+            <HowCard 
+              num={2} 
+              title="A Revelação" 
+              text="O Tarot decodifica o sentimento oculto, os bloqueios inconscientes e a janela de oportunidade aberta."
+              delay={0.2}
+            />
+            <HowCard 
+              num={3} 
+              title="O Direcionamento" 
+              text="Você recebe o plano exato para agir com estratégia, sem desperdiçar sua energia ou tempo."
+              delay={0.3}
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* ── Section 3: Depoimentos ── */}
+      <section className="py-32 relative">
+        <div className="container mx-auto px-6">
+          <SectionHeading 
+            title="Relatos de quem atravessou o silêncio"
+            subtitle="Mulheres que usaram o direcionamento para retomar o controle de suas vidas amorosas."
+          />
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <TestimonialCard 
+              quote="A precisão foi assustadora. Ele me mandou mensagem exatamente no dia que o Mapa previu. Estou em choque."
+              name="Isabella V."
+              location="São Paulo, SP"
+              delay={0.1}
+            />
+            <TestimonialCard 
+              quote="Eu estava perdida e desesperada. A leitura me deu a calma que eu precisava para agir com estratégia e não com impulso."
+              name="Carolina M."
+              location="Rio de Janeiro, RJ"
+              delay={0.2}
+            />
+            <TestimonialCard 
+              quote="Não é apenas tarot, é um manual psicológico. Entendi os bloqueios dele e soube como contornar sem me humilhar."
+              name="Marina S."
+              location="Belo Horizonte, MG"
+              delay={0.3}
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* ── Section 4: Oferta ── */}
+      <section ref={ofertaRef} id="oferta-mapa" className="py-32 relative bg-gradient-to-b from-[#1C1024] to-[#120817]">
+        <div className="container mx-auto px-6 max-w-5xl">
+          <div className="bg-[#1C1024] border border-[#E0B84C]/20 rounded-[48px] overflow-hidden shadow-[0_50px_100px_rgba(0,0,0,0.6)] relative group">
+            
+            <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none">
+                <Sparkles className="w-64 h-64 text-[#E0B84C]" />
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2">
+              {/* Left Side: Content */}
+              <div className="p-10 md:p-16 border-b lg:border-b-0 lg:border-r border-[#E0B84C]/10">
+                <Badge>Oferta de Lançamento</Badge>
+                <h2 className="text-3xl md:text-5xl font-serif text-[#FFF8E7] mb-8 leading-tight">
+                  Seu Mapa dos <br className="hidden md:block" /> 
+                  <span className="gold-text">21 Dias</span>
+                </h2>
+                <p className="text-[#FFF8E7]/60 text-lg font-light mb-10 leading-relaxed">
+                  O guia definitivo para atravessar o silêncio dele e manifestar a reconexão que você deseja.
+                </p>
+
+                <ul className="space-y-6">
+                  {[
+                    "Diagnóstico emocional profundo",
+                    "Janela de reconexão estratégica",
+                    "Script de aproximação subconsciente",
+                    "O que NÃO fazer (erros fatais)",
+                    "Protocolo de magnetismo diário"
+                  ].map((item, i) => (
+                    <li key={i} className="flex items-center gap-4 text-[#FFF8E7]/80 text-base">
+                      <div className="w-5 h-5 rounded-full bg-[#E0B84C]/10 flex items-center justify-center shrink-0">
+                        <CheckCircle2 className="w-3 h-3 text-[#E0B84C]" />
+                      </div>
+                      <span className="font-light tracking-wide">{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Right Side: Price & CTA */}
+              <div className="p-10 md:p-16 flex flex-col justify-center items-center text-center bg-[#120817]/40 backdrop-blur-sm">
+                <div className="mb-10">
+                    <p className="text-[#E0B84C]/50 text-xs tracking-[0.4em] uppercase mb-4">Investimento Especial</p>
+                    <div className="flex items-baseline gap-4 justify-center">
+                        <span className="text-6xl md:text-8xl font-serif text-[#E0B84C]">97</span>
+                        <div className="text-left">
+                            <p className="text-[#E0B84C] text-2xl font-serif">R$</p>
+                            <p className="text-[#FFF8E7]/20 text-lg line-through">197</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="w-full space-y-6">
+                    <motion.button 
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() => router.push("/checkout")}
+                        className="bg-[#E0B84C] text-[#120817] w-full py-8 rounded-[24px] text-xl font-bold tracking-tight shadow-2xl flex items-center justify-center gap-3 group/btn"
+                    >
+                        <span>RECEBER MEU MAPA AGORA</span>
+                        <ArrowRight className="w-6 h-6 group-hover/btn:translate-x-2 transition-transform" />
+                    </motion.button>
+                    
+                    <div className="flex flex-col items-center gap-4">
+                        <div className="flex items-center gap-2 text-[#FFF8E7]/30 text-[10px] uppercase tracking-[0.2em]">
+                            <Shield className="w-3 h-3" />
+                            <span>Acesso imediato e seguro</span>
+                        </div>
+                        <p className="text-[#FFF8E7]/20 text-[9px] uppercase tracking-[0.1em] max-w-[200px]">
+                            Disponível por este valor apenas durante esta sessão.
+                        </p>
+                    </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Section 5: FAQ ── */}
+      <section className="py-32 relative">
+        <div className="container mx-auto px-6 max-w-4xl">
+          <SectionHeading title="Perguntas Frequentes" centered />
+          
+          <div className="space-y-4">
+            <FAQItem 
+              q="A tiragem inicial é realmente gratuita?"
+              a="Sim. A leitura das 3 cartas é 100% gratuita para que você comprove a conexão energética antes de investir no seu Mapa de Direcionamento."
+            />
+            <FAQItem 
+              q="Como vou receber o Mapa dos 21 Dias?"
+              a="Imediatamente após a confirmação do pagamento, você receberá um e-mail com os dados de acesso à sua área privada onde o Mapa estará disponível."
+            />
+            <FAQItem 
+              q="Funciona se ele estiver com outra pessoa?"
+              a="O Mapa analisa a conexão espiritual e subconsciente. Se ainda houver resíduo emocional entre vocês (o que a tiragem revela), o método é aplicável."
+            />
+            <FAQItem 
+              q="E se eu não gostar do conteúdo?"
+              a="Oferecemos uma garantia incondicional de 30 dias. Se você sentir que o direcionamento não faz sentido para o seu caso, devolvemos 100% do seu investimento."
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* ── Footer ── */}
+      <footer className="py-20 border-t border-[#E0B84C]/10">
+        <div className="container mx-auto px-6 text-center">
+            <h3 className="text-2xl font-serif text-[#FFF8E7]/20 mb-12 tracking-[0.3em] uppercase">Amor da Lua</h3>
+            
+            <div className="flex justify-center gap-10 mb-12 flex-wrap">
+                {["Privacidade", "Termos", "Contato", "Afiliados"].map((link, i) => (
+                    <a key={i} href="#" className="text-[#FFF8E7]/40 hover:text-[#E0B84C] transition-colors text-[10px] uppercase tracking-[0.3em] font-sans">
+                        {link}
+                    </a>
+                ))}
+            </div>
+            
+            <p className="text-[#FFF8E7]/10 text-[9px] uppercase tracking-[0.2em] max-w-lg mx-auto leading-relaxed">
+                Este site não faz parte do Facebook ou Google. Além disso, este site NÃO é endossado por essas plataformas em qualquer aspecto. 
+                Os resultados podem variar de pessoa para pessoa.
+            </p>
+            
+            <p className="mt-12 text-[#FFF8E7]/20 text-[10px] uppercase tracking-[0.1em]">
+                © 2024 Amor da Lua · Todos os direitos reservados
+            </p>
+        </div>
       </footer>
 
+      <style jsx global>{`
+        .gold-text {
+          background: linear-gradient(135deg, #f0d07a, #E0B84C, #c49a2e);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+        }
+      `}</style>
     </main>
   );
 }
