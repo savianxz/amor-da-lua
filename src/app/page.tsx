@@ -2,351 +2,462 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Shield, Sparkles, Star, Lock, Moon } from "lucide-react";
+import { ChevronDown, Shield, Star } from "lucide-react";
 
-// ─────────────────────────────────────────────────────────────────────────────
-export default function LuxuryLandingPage() {
+/* ══════════════════════════════════════════════════════════════════════
+   SUB-COMPONENTS
+══════════════════════════════════════════════════════════════════════ */
+
+function Badge({ children }: { children: React.ReactNode }) {
+  return (
+    <span
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        padding: "6px 14px",
+        borderRadius: "999px",
+        border: "1px solid rgba(224,184,76,0.25)",
+        background: "rgba(224,184,76,0.07)",
+        fontFamily: "'Inter', sans-serif",
+        fontSize: "11px",
+        fontWeight: 500,
+        letterSpacing: "0.18em",
+        textTransform: "uppercase",
+        color: "#E0B84C",
+      }}
+    >
+      {children}
+    </span>
+  );
+}
+
+function Stars({ count = 5 }: { count?: number }) {
+  return (
+    <div style={{ display: "flex", gap: "2px" }}>
+      {Array.from({ length: count }).map((_, i) => (
+        <Star key={i} style={{ width: 14, height: 14, fill: "#E0B84C", color: "#E0B84C" }} />
+      ))}
+    </div>
+  );
+}
+
+function HowCard({ num, text }: { num: number; text: string }) {
+  return (
+    <div
+      className="card card-hover"
+      style={{ padding: "36px 28px", display: "flex", flexDirection: "column", gap: "16px" }}
+    >
+      <div
+        style={{
+          width: 40, height: 40, borderRadius: "50%",
+          border: "1px solid rgba(224,184,76,0.3)",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          fontFamily: "'Playfair Display', serif",
+          fontSize: 16, color: "#E0B84C",
+          flexShrink: 0,
+        }}
+      >
+        {num}
+      </div>
+      <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 15, fontWeight: 300, lineHeight: 1.65, color: "rgba(255,248,231,0.82)" }}>
+        {text}
+      </p>
+    </div>
+  );
+}
+
+function TestimonialCard({ quote, name, location }: { quote: string; name: string; location: string }) {
+  return (
+    <div className="card card-hover" style={{ padding: "32px 28px", display: "flex", flexDirection: "column", gap: "20px" }}>
+      <Stars />
+      <p style={{
+        fontFamily: "'Inter', sans-serif", fontStyle: "italic",
+        fontSize: 15, fontWeight: 300, lineHeight: 1.75,
+        color: "rgba(255,248,231,0.80)",
+      }}>
+        "{quote}"
+      </p>
+      <div style={{ borderTop: "1px solid rgba(224,184,76,0.12)", paddingTop: 16 }}>
+        <p style={{ fontFamily: "'Playfair Display', serif", fontSize: 13, color: "#E0B84C", letterSpacing: "0.08em" }}>{name}</p>
+        <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 11, color: "rgba(255,248,231,0.35)", marginTop: 2 }}>{location}</p>
+      </div>
+    </div>
+  );
+}
+
+function FAQItem({ q, a }: { q: string; a: string }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div
+      style={{
+        borderBottom: "1px solid rgba(224,184,76,0.10)",
+        paddingBottom: open ? 20 : 0,
+        marginBottom: 0,
+      }}
+    >
+      <button
+        onClick={() => setOpen(!open)}
+        style={{
+          width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center",
+          padding: "22px 0", background: "none", border: "none", cursor: "pointer",
+          textAlign: "left", gap: 16,
+        }}
+      >
+        <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 17, color: "#FFF8E7", fontWeight: 400 }}>
+          {q}
+        </span>
+        <ChevronDown
+          style={{
+            width: 18, height: 18, color: "#E0B84C", flexShrink: 0,
+            transition: "transform 0.25s",
+            transform: open ? "rotate(180deg)" : "rotate(0deg)",
+          }}
+        />
+      </button>
+      {open && (
+        <p className="faq-answer" style={{
+          fontFamily: "'Inter', sans-serif", fontSize: 15, fontWeight: 300,
+          lineHeight: 1.75, color: "rgba(255,248,231,0.65)", paddingBottom: 4,
+        }}>
+          {a}
+        </p>
+      )}
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   TAROT CARDS VISUAL
+══════════════════════════════════════════════════════════════════════ */
+function TarotScene() {
+  return (
+    <div style={{ position: "relative", width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      {/* Subtle ambient glow — just one, not overwhelming */}
+      <div style={{
+        position: "absolute", width: 260, height: 340,
+        background: "radial-gradient(ellipse, rgba(224,184,76,0.10) 0%, transparent 70%)",
+        borderRadius: "50%", filter: "blur(30px)", pointerEvents: "none",
+      }} />
+
+      {/* Card 1 — back left */}
+      <div
+        className="tarot tarot-1"
+        style={{
+          width: 150, height: 250,
+          top: "50%", left: "50%",
+          marginTop: -125, marginLeft: -190,
+          zIndex: 10,
+          boxShadow: "0 20px 60px rgba(0,0,0,0.55)",
+          opacity: 0.82,
+        }}
+      >
+        <div style={{ fontSize: 38 }}>🌙</div>
+        <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 11, color: "#E0B84C", letterSpacing: "0.2em", textTransform: "uppercase" }}>
+          O Oculto
+        </span>
+      </div>
+
+      {/* Card 2 — front center (largest) */}
+      <div
+        className="tarot tarot-2"
+        style={{
+          width: 168, height: 278,
+          top: "50%", left: "50%",
+          marginTop: -139, marginLeft: -84,
+          zIndex: 30,
+          boxShadow: "0 24px 70px rgba(0,0,0,0.65), 0 0 40px rgba(224,184,76,0.12)",
+        }}
+      >
+        <div style={{ fontSize: 44 }}>✨</div>
+        <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 11, color: "#E0B84C", letterSpacing: "0.2em", textTransform: "uppercase" }}>
+          A Conexão
+        </span>
+      </div>
+
+      {/* Card 3 — back right */}
+      <div
+        className="tarot tarot-3"
+        style={{
+          width: 148, height: 246,
+          top: "50%", left: "50%",
+          marginTop: -123, marginLeft: 24,
+          zIndex: 20,
+          boxShadow: "0 20px 60px rgba(0,0,0,0.55)",
+          opacity: 0.80,
+        }}
+      >
+        <div style={{ fontSize: 38 }}>👁️</div>
+        <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 11, color: "#E0B84C", letterSpacing: "0.2em", textTransform: "uppercase" }}>
+          O Destino
+        </span>
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   MAIN PAGE
+══════════════════════════════════════════════════════════════════════ */
+export default function HomePage() {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
-  const quizRef = useRef<HTMLDivElement>(null);
+  const ofertaRef = useRef<HTMLElement>(null);
 
   useEffect(() => { setMounted(true); }, []);
 
-  // Scroll to quiz section OR navigate to /consulta
-  const handleCTA = () => {
-    if (quizRef.current) {
-      quizRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
-    } else {
-      router.push("/consulta");
-    }
-  };
+  const scrollToOferta = () =>
+    ofertaRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
 
   if (!mounted) return null;
 
   return (
-    <main className="min-h-screen relative overflow-hidden bg-[#120817]">
+    <main style={{ background: "#120817", minHeight: "100vh", overflowX: "hidden" }}>
 
-      {/* ── Background Glows ── */}
-      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full opacity-30 blur-[120px] pointer-events-none"
-        style={{ background: "radial-gradient(circle, #7A1F4B, transparent)" }} />
-      <div className="absolute bottom-[-5%] right-[-5%] w-[45%] h-[45%] rounded-full opacity-15 blur-[120px] pointer-events-none"
-        style={{ background: "radial-gradient(circle, #E0B84C, transparent)" }} />
+      {/* ════════════════════════════════════════
+          SEÇÃO 1 — HERO
+      ════════════════════════════════════════ */}
+      <section style={{ minHeight: "100svh", display: "flex", alignItems: "center", padding: "80px 0 60px" }}>
+        <div className="container" style={{ width: "100%" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "64px", alignItems: "center" }}>
 
-      {/* ═══════════════════════════════════════════
-          1. HERO SECTION
-      ═══════════════════════════════════════════ */}
-      <section className="relative min-h-screen flex items-center">
-        <div className="flex flex-col lg:flex-row w-full items-center min-h-screen">
+            {/* LEFT */}
+            <div className="fade-up" style={{ display: "flex", flexDirection: "column", gap: 0 }}>
+              <div style={{ marginBottom: 24 }}>
+                <Badge>Consulta Privada de Reconexão</Badge>
+              </div>
 
-          {/* ── LEFT: Copy & CTA ── */}
-          <div
-            className="flex flex-col items-start justify-center z-10 animate-fade-in-up px-6 py-20 lg:py-0 w-full lg:w-[60%]"
-            style={{ maxWidth: "540px", marginLeft: "clamp(20px, 8%, 120px)" }}
-          >
-            {/* Sello Método Exclusivo */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 mb-5 rounded-full"
-              style={{
-                background: "rgba(122, 31, 75, 0.15)",
-                border: "1px solid rgba(122, 31, 75, 0.5)",
-              }}>
-              <Moon className="w-3.5 h-3.5 text-[#E0B84C]" />
-              <span className="font-inter text-[11px] tracking-[0.18em] uppercase text-[#E0B84C] font-medium">
-                Leitura de Reconexão Lunar · Método Exclusivo
-              </span>
-            </div>
+              <h1
+                className="font-serif"
+                style={{
+                  fontSize: "clamp(28px, 3.2vw, 42px)",
+                  fontWeight: 400,
+                  lineHeight: 1.22,
+                  color: "#FFF8E7",
+                  marginBottom: 24,
+                }}
+              >
+                Ele realmente te esqueceu...<br />
+                ou ainda existe uma<br />
+                <span className="gold-text">conexão não encerrada?</span>
+              </h1>
 
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 mb-7 rounded-sm"
-              style={{ background: "rgba(224, 184, 76, 0.07)", border: "1px solid rgba(224, 184, 76, 0.18)" }}>
-              <Sparkles className="w-3.5 h-3.5 text-[#E0B84C]" />
-              <span className="font-inter text-[11px] tracking-[0.2em] uppercase text-[#E0B84C] font-medium">
-                Consulta Privada de Reconexão
-              </span>
-            </div>
+              <p
+                style={{
+                  fontFamily: "'Inter', sans-serif",
+                  fontSize: 16, fontWeight: 300,
+                  lineHeight: 1.75, color: "rgba(255,248,231,0.72)",
+                  marginBottom: 36, maxWidth: 440,
+                }}
+              >
+                Existe algo que ele ainda sente e talvez nem consiga admitir.
+                Sua leitura revela se essa conexão ainda pode ser reativada.
+              </p>
 
-            {/* Headline — 3 lines, no italic, gold only line 3 */}
-            <h1 className="font-playfair font-normal leading-[1.2] text-[#FFF8E7]" style={{ marginBottom: "28px" }}>
-              <span className="block text-[27px] sm:text-[33px] lg:text-[39px]">
-                Ele realmente te esqueceu...
-              </span>
-              <span className="block text-[27px] sm:text-[33px] lg:text-[39px]">
-                ou ainda existe uma
-              </span>
-              <span className="block text-[27px] sm:text-[33px] lg:text-[39px] text-gradient-gold">
-                conexão não encerrada?
-              </span>
-            </h1>
+              <button className="btn-cta" style={{ maxWidth: 400, marginBottom: 14 }} onClick={scrollToOferta}>
+                Quero Ver Minha Leitura Agora
+              </button>
 
-            {/* Subheadline — new copy */}
-            <p
-              className="font-inter text-base sm:text-[17px] font-light leading-relaxed text-[#FFF8E7]/80 max-w-[480px]"
-              style={{ marginBottom: "32px" }}
-            >
-              Existe algo que ele ainda sente e talvez nem consiga admitir. Sua leitura revela se essa conexão ainda pode ser reativada.
-            </p>
+              <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 12, color: "rgba(255,248,231,0.38)", letterSpacing: "0.06em", marginBottom: 24 }}>
+                Consulta sigilosa&nbsp;&nbsp;•&nbsp;&nbsp;Resultado imediato
+              </p>
 
-            {/* ── CTA DOMINANTE ── */}
-            <button
-              onClick={handleCTA}
-              className="font-inter font-bold text-[15px] tracking-widest uppercase w-full sm:w-auto flex items-center justify-center gap-3 cursor-pointer transition-transform duration-300 hover:scale-[1.03] active:scale-[0.98]"
-              style={{
-                background: "linear-gradient(135deg, #C9A438, #E0B84C, #F0CD72)",
-                color: "#120817",
-                padding: "20px 40px",
-                borderRadius: "14px",
-                border: "none",
-                animation: "pulse-cta 3s ease-in-out infinite",
-                marginBottom: "18px",
-                letterSpacing: "0.08em",
-              }}
-            >
-              QUERO VER MINHA LEITURA AGORA
-            </button>
-
-            {/* Social Proof inline */}
-            <div className="flex flex-col gap-1.5 mb-4">
-              <div className="flex items-center gap-2">
-                <div className="flex gap-0.5">
-                  {[1,2,3,4,5].map(s => (
-                    <Star key={s} className="w-4 h-4 fill-[#E0B84C] text-[#E0B84C]" />
-                  ))}
-                </div>
-                <span className="font-inter text-sm text-[#FFF8E7]/90 font-medium">
+              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <Stars />
+                <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 13, color: "rgba(255,248,231,0.70)" }}>
                   327 leituras realizadas recentemente
                 </span>
               </div>
-              <p className="font-inter text-xs text-[#FFF8E7]/45 tracking-wide">
-                Resultados privados e sigilosos
-              </p>
             </div>
 
-            {/* Emotional Microcopy */}
-            <p className="font-playfair text-sm italic text-[#FFF8E7]/50 leading-relaxed mb-6">
-              "Algumas conexões se encerram.<br />
-              Outras apenas entram em silêncio."
-            </p>
-
-            {/* Trust pills */}
-            <div className="flex items-center gap-5 opacity-55">
-              <div className="flex items-center gap-1.5 font-inter text-[11px] tracking-wider uppercase">
-                <Lock className="w-3 h-3" /> Sigilosa
-              </div>
-              <div className="w-px h-3 bg-[#E0B84C]/30" />
-              <div className="flex items-center gap-1.5 font-inter text-[11px] tracking-wider uppercase">
-                <Sparkles className="w-3 h-3" /> Resultado Imediato
-              </div>
-              <div className="w-px h-3 bg-[#E0B84C]/30" />
-              <div className="flex items-center gap-1.5 font-inter text-[11px] tracking-wider uppercase">
-                <Shield className="w-3 h-3" /> Gratuita
-              </div>
+            {/* RIGHT — Tarot Cards */}
+            <div className="fade-up-2" style={{ position: "relative", height: 400 }}>
+              <TarotScene />
             </div>
+
           </div>
-
-          {/* ── RIGHT: 3 Large Floating Tarot Cards — 35% of screen ── */}
-          <div className="relative w-full lg:w-[35%] h-[460px] lg:h-screen flex items-center justify-center z-0 flex-shrink-0">
-            {/* Layered ambient glow */}
-            <div className="absolute w-[280px] h-[380px] rounded-[50%] blur-[90px] opacity-15 pointer-events-none"
-              style={{ background: "radial-gradient(ellipse, #E0B84C 0%, #7A1F4B 50%, transparent 80%)" }} />
-
-            {/* Card 1 — far back left */}
-            <div
-              className="absolute tarot-card-luxury flex flex-col items-center justify-center gap-3 animate-float"
-              style={{
-                width: "160px", height: "270px",
-                top: "50%", left: "50%",
-                marginTop: "-135px", marginLeft: "-185px",
-                transform: "rotate(-16deg)",
-                zIndex: 10,
-                filter: "drop-shadow(0 0 18px rgba(224,184,76,0.18))",
-                opacity: 0.85,
-              }}
-            >
-              <div className="text-[42px]">🌙</div>
-              <div className="font-playfair text-[#E0B84C] text-xs text-center uppercase tracking-[0.18em] px-3">O Oculto</div>
-            </div>
-
-            {/* Card 2 — front center (biggest) */}
-            <div
-              className="absolute tarot-card-luxury flex flex-col items-center justify-center gap-3 animate-float-delayed"
-              style={{
-                width: "185px", height: "305px",
-                top: "50%", left: "50%",
-                marginTop: "-152px", marginLeft: "-92px",
-                transform: "rotate(2deg)",
-                zIndex: 30,
-                filter: "drop-shadow(0 0 30px rgba(224,184,76,0.35))",
-              }}
-            >
-              <div className="text-[48px]">✨</div>
-              <div className="font-playfair text-[#E0B84C] text-xs text-center uppercase tracking-[0.18em] px-3">A Conexão</div>
-            </div>
-
-            {/* Card 3 — back right */}
-            <div
-              className="absolute tarot-card-luxury flex flex-col items-center justify-center gap-3 animate-float-slow"
-              style={{
-                width: "155px", height: "260px",
-                top: "50%", left: "50%",
-                marginTop: "-130px", marginLeft: "10px",
-                transform: "rotate(18deg)",
-                zIndex: 20,
-                filter: "drop-shadow(0 0 18px rgba(224,184,76,0.18))",
-                opacity: 0.88,
-              }}
-            >
-              <div className="text-[42px]">👁️</div>
-              <div className="font-playfair text-[#E0B84C] text-xs text-center uppercase tracking-[0.18em] px-3">O Destino</div>
-            </div>
-          </div>
-
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════════
-          2. QUIZ ANCHOR (scroll target)
-      ═══════════════════════════════════════════ */}
-      <div ref={quizRef} id="quiz" />
-
-      {/* ═══════════════════════════════════════════
-          3. SOCIAL PROOF — Testimonials
-      ═══════════════════════════════════════════ */}
-      <section className="py-24 px-6 relative bg-[#1D0E25]/30">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="font-playfair text-3xl md:text-4xl text-[#E0B84C] mb-4">
-              Vozes da Intuição
+      {/* ════════════════════════════════════════
+          SEÇÃO 2 — COMO FUNCIONA
+      ════════════════════════════════════════ */}
+      <section className="section" style={{ background: "#1C1024" }}>
+        <div className="container">
+          <div style={{ textAlign: "center", marginBottom: 56 }}>
+            <h2 className="font-serif" style={{ fontSize: "clamp(24px, 2.6vw, 34px)", fontWeight: 400, color: "#FFF8E7", marginBottom: 12 }}>
+              Como Sua Leitura Acontece
             </h2>
-            <div className="w-10 h-[1px] bg-[#E0B84C] mx-auto opacity-40" />
+            <div className="divider" />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              { text: "Foi como se as cartas lessem a minha alma. Tudo que ele não me dizia, a consulta revelou. Voltei a falar com ele e ele confirmou tudo.", name: "Isabella V." },
-              { text: "Estávamos afastados há meses. O direcionamento do tarot me deu a clareza exata de qual postura adotar. Hoje, a conexão renasceu.", name: "Carolina M." },
-              { text: "Eu não entendia os sinais confusos que ele dava. A leitura me mostrou a ferida que ele carregava. Com apenas uma atitude minha, tudo mudou.", name: "Marina S." },
-            ].map((item, i) => (
-              <div key={i} className="glass-luxury p-8 flex flex-col justify-between group hover:border-[#E0B84C]/40 transition-colors duration-500">
-                <div className="mb-5 flex gap-1">
-                  {[1,2,3,4,5].map(s => <Star key={s} className="w-3.5 h-3.5 fill-[#E0B84C] text-[#E0B84C]" />)}
-                </div>
-                <p className="font-inter font-light text-[15px] leading-loose text-[#FFF8E7]/80 mb-8 italic">
-                  "{item.text}"
-                </p>
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-[1px] bg-[#E0B84C]/30 group-hover:bg-[#E0B84C]/60 transition-colors" />
-                  <p className="font-playfair text-sm tracking-widest text-[#E0B84C] uppercase">{item.name}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Second CTA after testimonials */}
-          <div className="flex justify-center mt-14">
-            <button
-              onClick={handleCTA}
-              className="font-inter font-bold text-[14px] tracking-widest uppercase cursor-pointer transition-transform duration-300 hover:scale-[1.03] active:scale-[0.98]"
-              style={{
-                background: "linear-gradient(135deg, #C9A438, #E0B84C, #F0CD72)",
-                color: "#120817",
-                padding: "18px 40px",
-                borderRadius: "14px",
-                border: "none",
-                boxShadow: "0 0 25px rgba(224, 184, 76, 0.3)",
-              }}
-            >
-              QUERO VER MINHA LEITURA AGORA
-            </button>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20 }}>
+            <HowCard num={1} text="Você responde 3 perguntas rápidas sobre a conexão e o momento que viveu juntos." />
+            <HowCard num={2} text="As cartas revelam o estado emocional atual da conexão e o que ele carrega internamente." />
+            <HowCard num={3} text="Você descobre o próximo passo ideal para agir com clareza, sem desperdício emocional." />
           </div>
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════════
-          4. COMO FUNCIONA
-      ═══════════════════════════════════════════ */}
-      <section className="py-32 px-6 max-w-5xl mx-auto">
-        <div className="text-center mb-20">
-          <h2 className="font-playfair text-3xl md:text-4xl text-[#FFF8E7] mb-6">
-            A Jornada da <span className="text-gradient-gold">Clareza</span>
-          </h2>
-          <p className="font-inter font-light text-lg text-[#FFF8E7]/55">
-            Três etapas simples para revelar o que está oculto.
-          </p>
+      {/* ════════════════════════════════════════
+          SEÇÃO 3 — DEPOIMENTOS
+      ════════════════════════════════════════ */}
+      <section className="section">
+        <div className="container">
+          <div style={{ textAlign: "center", marginBottom: 56 }}>
+            <h2 className="font-serif" style={{ fontSize: "clamp(24px, 2.6vw, 34px)", fontWeight: 400, color: "#FFF8E7", marginBottom: 12 }}>
+              Relatos Reais
+            </h2>
+            <div className="divider" />
+          </div>
+
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20 }}>
+            <TestimonialCard
+              quote="A leitura me trouxe clareza sobre o afastamento e me ajudou a agir com mais consciência. Parei de mandar mensagens desnecessárias e a dinâmica mudou."
+              name="Isabella V."
+              location="São Paulo"
+            />
+            <TestimonialCard
+              quote="Eu esperava algo genérico, mas foi surpreendentemente preciso. A carta central descreveu exatamente o silêncio que ele estava impondo."
+              name="Carolina M."
+              location="Rio de Janeiro"
+            />
+            <TestimonialCard
+              quote="Não sei explicar racionalmente, mas aquela semana eu segui o direcionamento e ele entrou em contato. Estou grata pela coragem que a leitura me deu."
+              name="Marina S."
+              location="Belo Horizonte"
+            />
+          </div>
         </div>
+      </section>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 relative">
-          <div className="hidden md:block absolute top-6 left-[15%] right-[15%] h-[1px] bg-gradient-to-r from-transparent via-[#E0B84C]/25 to-transparent" />
+      {/* ════════════════════════════════════════
+          SEÇÃO 4 — OFERTA
+      ════════════════════════════════════════ */}
+      <section className="section" ref={ofertaRef} style={{ background: "#1C1024" }}>
+        <div className="container-sm">
+          <div style={{ textAlign: "center", marginBottom: 48 }}>
+            <h2 className="font-serif" style={{ fontSize: "clamp(24px, 2.6vw, 36px)", fontWeight: 400, color: "#FFF8E7", marginBottom: 12 }}>
+              Seu Mapa dos 21 Dias
+            </h2>
+            <div className="divider" />
+            <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 15, fontWeight: 300, color: "rgba(255,248,231,0.60)", marginTop: 16 }}>
+              Tudo que você precisa para agir com estratégia e presença.
+            </p>
+          </div>
 
-          {[
-            { num: "I", title: "Sintonia", desc: "Você responderá três perguntas essenciais para conectar sua energia ao momento atual." },
-            { num: "II", title: "Revelação", desc: "Nossa leitura mística tirará as cartas certas para expor a verdade emocional dele." },
-            { num: "III", title: "Direcionamento", desc: "Receba um plano claro de postura e atitude para transformar o afastamento em reconexão." },
-          ].map((step, i) => (
-            <div key={i} className="relative flex flex-col items-center text-center group">
-              <div className="w-12 h-12 rounded-full bg-[#120817] border border-[#E0B84C]/40 flex items-center justify-center mb-8 relative z-10 group-hover:border-[#E0B84C] transition-colors duration-500 shadow-[0_0_15px_rgba(224,184,76,0.08)]">
-                <span className="font-playfair text-[#E0B84C]">{step.num}</span>
+          <div className="card" style={{ padding: "44px 48px" }}>
+            {/* Features list */}
+            <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: 16, marginBottom: 40 }}>
+              {[
+                "Diagnóstico emocional da conexão atual",
+                "Janela de reconexão — o momento certo para agir",
+                "Os erros que aumentam o afastamento",
+                "Estratégia personalizada de aproximação",
+                "Direcionamento prático para os próximos 21 dias",
+              ].map((item, i) => (
+                <li key={i} style={{ display: "flex", alignItems: "flex-start", gap: 14 }}>
+                  <span style={{
+                    color: "#E0B84C", fontFamily: "'Inter', sans-serif",
+                    fontWeight: 600, fontSize: 15, flexShrink: 0, marginTop: 1,
+                  }}>✓</span>
+                  <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 15, fontWeight: 300, color: "rgba(255,248,231,0.82)", lineHeight: 1.55 }}>
+                    {item}
+                  </span>
+                </li>
+              ))}
+            </ul>
+
+            {/* Price + CTA */}
+            <div style={{ borderTop: "1px solid rgba(224,184,76,0.12)", paddingTop: 36 }}>
+              <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 6 }}>
+                <span className="font-serif" style={{ fontSize: 42, color: "#E0B84C", fontWeight: 500 }}>R$&nbsp;97</span>
+                <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 13, color: "rgba(255,248,231,0.38)", textDecoration: "line-through" }}>R$ 197</span>
               </div>
-              <h3 className="font-playfair text-xl text-[#FFF8E7] mb-4">{step.title}</h3>
-              <p className="font-inter font-light text-sm leading-relaxed text-[#FFF8E7]/55 px-2">
-                {step.desc}
+              <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 12, color: "rgba(255,248,231,0.40)", letterSpacing: "0.04em", marginBottom: 28 }}>
+                Pagamento único · Acesso vitalício
               </p>
+              <button className="btn-cta" onClick={() => router.push("/checkout")}>
+                Receber Meu Mapa
+              </button>
+              <p style={{
+                fontFamily: "'Inter', sans-serif", fontSize: 11, textAlign: "center",
+                color: "rgba(255,248,231,0.32)", marginTop: 14, letterSpacing: "0.04em",
+              }}>
+                Disponível apenas durante esta sessão
+              </p>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, marginTop: 20 }}>
+                <Shield style={{ width: 13, height: 13, color: "rgba(255,248,231,0.35)" }} />
+                <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 11, color: "rgba(255,248,231,0.35)" }}>
+                  Garantia incondicional de 30 dias
+                </span>
+              </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ════════════════════════════════════════
+          SEÇÃO 5 — FAQ
+      ════════════════════════════════════════ */}
+      <section className="section">
+        <div className="container-sm">
+          <div style={{ textAlign: "center", marginBottom: 52 }}>
+            <h2 className="font-serif" style={{ fontSize: "clamp(22px, 2.4vw, 32px)", fontWeight: 400, color: "#FFF8E7", marginBottom: 12 }}>
+              Dúvidas Frequentes
+            </h2>
+            <div className="divider" />
+          </div>
+
+          <div>
+            <FAQItem
+              q="A consulta é realmente gratuita?"
+              a="Sim. A leitura inicial das três cartas é completamente gratuita e imediata. Você só decide sobre o Mapa dos 21 Dias após receber sua leitura."
+            />
+            <FAQItem
+              q="Preciso ter conhecimento de tarot?"
+              a="Não. Você responde apenas três perguntas simples. Nossa leitura é apresentada de forma clara, objetiva e sem jargões."
+            />
+            <FAQItem
+              q="Em quanto tempo recebo meu Mapa?"
+              a="Assim que a compra é confirmada, você recebe acesso imediato ao PDF completo do Mapa dos 21 Dias no seu e-mail."
+            />
+            <FAQItem
+              q="Funciona mesmo para casos difíceis?"
+              a="A leitura oferece clareza emocional e direcionamento estratégico independente do estágio do afastamento. Não prometemos resultados específicos, mas oferecemos uma perspectiva que a maioria das mulheres ainda não tem."
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* ════════════════════════════════════════
+          FOOTER
+      ════════════════════════════════════════ */}
+      <footer style={{
+        borderTop: "1px solid rgba(224,184,76,0.08)",
+        padding: "40px 24px",
+        textAlign: "center",
+      }}>
+        <p className="font-serif" style={{ fontSize: 18, color: "rgba(255,248,231,0.18)", marginBottom: 20 }}>
+          Amor da Lua
+        </p>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 20, flexWrap: "wrap" }}>
+          {["Privacidade", "Termos de Uso", "Contato"].map((item, i) => (
+            <a key={i} href="#" style={{
+              fontFamily: "'Inter', sans-serif", fontSize: 11,
+              letterSpacing: "0.1em", textTransform: "uppercase",
+              color: "rgba(255,248,231,0.22)",
+              textDecoration: "none", transition: "color 0.2s",
+            }}
+              onMouseEnter={e => (e.currentTarget.style.color = "rgba(224,184,76,0.55)")}
+              onMouseLeave={e => (e.currentTarget.style.color = "rgba(255,248,231,0.22)")}
+            >
+              {item}
+            </a>
           ))}
         </div>
-
-        <div className="mt-20 flex justify-center">
-          <button
-            onClick={handleCTA}
-            className="font-inter text-sm tracking-[0.2em] uppercase text-[#E0B84C] border-b border-[#E0B84C]/30 pb-1 hover:border-[#E0B84C] transition-colors cursor-pointer"
-          >
-            Iniciar Sintonia Agora
-          </button>
-        </div>
-      </section>
-
-      {/* ═══════════════════════════════════════════
-          5. GARANTIA
-      ═══════════════════════════════════════════ */}
-      <section className="py-24 px-6 bg-[#1D0E25]/50 border-t border-[#E0B84C]/10">
-        <div className="max-w-3xl mx-auto text-center">
-          <Shield className="w-10 h-10 mx-auto text-[#E0B84C] mb-8 opacity-75" />
-          <h2 className="font-playfair text-2xl md:text-3xl text-[#FFF8E7] mb-6">
-            Tranquilidade Absoluta
-          </h2>
-          <p className="font-inter font-light text-[15px] leading-relaxed text-[#FFF8E7]/65 mb-10">
-            A sua consulta inicial é completamente gratuita. Caso decida prosseguir com o Mapa dos 21 Dias,
-            seu investimento estará coberto por nossa garantia incondicional de 30 dias.
-            Se não sentir a conexão reestabelecida, devolvemos seu valor integralmente.
-          </p>
-          <button
-            onClick={handleCTA}
-            className="font-inter font-bold text-[14px] tracking-widest uppercase cursor-pointer transition-transform duration-300 hover:scale-[1.03]"
-            style={{
-              background: "linear-gradient(135deg, #C9A438, #E0B84C, #F0CD72)",
-              color: "#120817",
-              padding: "18px 40px",
-              borderRadius: "14px",
-              border: "none",
-              boxShadow: "0 0 25px rgba(224, 184, 76, 0.3)",
-            }}
-          >
-            QUERO VER MINHA LEITURA AGORA
-          </button>
-        </div>
-      </section>
-
-      {/* ── FOOTER ── */}
-      <footer className="py-12 px-6 border-t border-[#E0B84C]/10 text-center">
-        <div className="text-2xl mb-6 opacity-40">🌙</div>
-        <p className="font-inter font-light text-xs tracking-wider uppercase text-[#FFF8E7]/25 mb-4">
-          O amor é energia. A reconexão é escolha.
+        <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 10, color: "rgba(255,248,231,0.14)", marginTop: 20, letterSpacing: "0.06em" }}>
+          © 2024 Amor da Lua · Todos os direitos reservados
         </p>
-        <div className="flex items-center justify-center gap-6 font-inter text-[10px] uppercase tracking-widest text-[#FFF8E7]/18">
-          <a href="#" className="hover:text-[#E0B84C]/50 transition-colors">Privacidade</a>
-          <span>|</span>
-          <a href="#" className="hover:text-[#E0B84C]/50 transition-colors">Termos de Uso</a>
-          <span>|</span>
-          <span>© 2024 Tarot Reconexão</span>
-        </div>
       </footer>
 
     </main>
