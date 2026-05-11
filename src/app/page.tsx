@@ -253,7 +253,7 @@ export default function HomePage() {
                 Sua leitura revela se essa conexão ainda pode ser reativada.
               </p>
 
-              <button className="btn-cta" style={{ maxWidth: 400, marginBottom: 14 }} onClick={scrollToOferta}>
+              <button className="btn-cta" style={{ maxWidth: 400, marginBottom: 14 }} onClick={() => router.push("/tiragem")}>
                 Quero Ver Minha Leitura Agora
               </button>
 
@@ -333,7 +333,7 @@ export default function HomePage() {
       {/* ════════════════════════════════════════
           SEÇÃO 4 — OFERTA
       ════════════════════════════════════════ */}
-      <section className="section" ref={ofertaRef} style={{ background: "#1C1024" }}>
+      <section className="section" ref={ofertaRef} id="oferta-mapa" style={{ background: "#1C1024" }}>
         <div className="container-sm">
           <div style={{ textAlign: "center", marginBottom: 48 }}>
             <h2 className="font-serif" style={{ fontSize: "clamp(24px, 2.6vw, 36px)", fontWeight: 400, color: "#FFF8E7", marginBottom: 12 }}>
