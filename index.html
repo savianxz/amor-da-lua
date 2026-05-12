@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Amor da Lua — Consulta privada de reconexão</title>
+    <meta
+      name="description"
+      content="Consulta privada de reconexão amorosa. Leitura gratuita e direcionamento emocional com clareza."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container site-header__inner">
+        <span class="logo">Amor da Lua</span>
+        <a class="link-muted" href="#tiragem">Leitura gratuita</a>
+      </div>
+    </header>
+
+    <main>
+      <!-- HERO -->
+      <section class="hero" id="topo">
+        <div class="container hero__grid">
+          <div class="hero__copy reveal-on-scroll">
+            <span class="badge">Consulta privada de reconexão</span>
+            <h1 class="hero__title">
+              Ele realmente te esqueceu…<br />
+              <span class="hero__title-accent">ou ainda existe uma conexão não encerrada?</span>
+            </h1>
+            <p class="hero__lead">
+              Existe algo que ele ainda sente e talvez nem consiga admitir.<br />
+              Sua leitura revela se essa conexão ainda pode ser reativada.
+            </p>
+            <a class="btn btn--primary" href="#tiragem">Fazer minha leitura gratuita</a>
+            <p class="microcopy">Consulta sigilosa · Resultado imediato</p>
+            <div class="social-proof">
+              <span class="stars" aria-hidden="true">★★★★★</span>
+              <span>327 leituras realizadas recentemente</span>
+            </div>
+            <p class="hero__whisper">
+              Algumas conexões terminam.<br />
+              Outras apenas entram em silêncio.
+            </p>
+          </div>
+
+          <div class="hero__visual reveal-on-scroll" aria-hidden="true">
+            <div class="hero-cards">
+              <div class="hero-card hero-card--1"></div>
+              <div class="hero-card hero-card--2"></div>
+              <div class="hero-card hero-card--3"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- COMO FUNCIONA -->
+      <section class="section section--how" id="como-funciona">
+        <div class="container">
+          <header class="section__head reveal-on-scroll">
+            <h2 class="section__title">Como funciona sua consulta</h2>
+            <p class="section__sub">Três etapas simples para revelar o que ainda existe.</p>
+          </header>
+          <div class="how-grid">
+            <article class="info-card reveal-on-scroll">
+              <span class="info-card__step">01</span>
+              <h3 class="info-card__title">Sintonia</h3>
+              <p class="info-card__text">Você responde três perguntas rápidas.</p>
+            </article>
+            <article class="info-card reveal-on-scroll">
+              <span class="info-card__step">02</span>
+              <h3 class="info-card__title">Revelação</h3>
+              <p class="info-card__text">As cartas identificam o momento emocional entre vocês.</p>
+            </article>
+            <article class="info-card reveal-on-scroll">
+              <span class="info-card__step">03</span>
+              <h3 class="info-card__title">Direcionamento</h3>
+              <p class="info-card__text">Você descobre o próximo passo ideal.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- TIRAGEM -->
+      <section class="section section--tiragem" id="tiragem">
+        <div class="container">
+          <header class="section__head reveal-on-scroll">
+            <h2 class="section__title">Sua Tiragem Especial</h2>
+            <p class="section__sub">Escolha três cartas e descubra o que ele ainda guarda.</p>
+          </header>
+
+          <div class="tiragem-wrap reveal-on-scroll">
+            <div class="tiragem-cards" id="tiragem-cards" role="group" aria-label="Cartas para seleção"></div>
+            <p class="tiragem-hint" id="tiragem-hint">Toque em três cartas.</p>
+            <button type="button" class="btn btn--primary btn--wide" id="btn-revelar" disabled>
+              Revelar as cartas
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- OVERLAY INTERPRETAÇÃO -->
+      <div class="interpret-overlay" id="interpret-overlay" hidden>
+        <div class="interpret-overlay__box">
+          <p class="interpret-overlay__text">Interpretando os sinais energéticos…</p>
+          <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="interpret-progress">
+            <div class="progress__bar" id="interpret-progress-bar"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RESULTADO -->
+      <section class="section section--result" id="resultado" hidden>
+        <div class="container">
+          <header class="section__head reveal-on-scroll is-visible">
+            <h2 class="section__title">O que as cartas revelam</h2>
+          </header>
+
+          <div class="result-layout">
+            <div class="result-cards-row" id="result-cards-row"></div>
+
+            <div class="result-copy reveal-on-scroll is-visible">
+              <p>As cartas confirmam algo importante.</p>
+              <p>O vínculo entre vocês ainda existe.</p>
+              <p>
+                Mas existe também um bloqueio emocional que precisa ser tratado com precisão. As próximas atitudes
+                definem se essa conexão se reabre… ou se se encerra de vez.
+              </p>
+            </div>
+
+            <div class="alert-box reveal-on-scroll is-visible" role="status">
+              <span class="alert-box__icon" aria-hidden="true">⚠</span>
+              <div>
+                <strong class="alert-box__title">Janela emocional ativa</strong>
+                <p class="alert-box__text">
+                  As cartas indicam movimento real nos próximos 7 a 21 dias. Uma atitude impulsiva pode fechar essa
+                  abertura.
+                </p>
+              </div>
+            </div>
+
+            <div class="result-cta reveal-on-scroll is-visible">
+              <a class="btn btn--wine btn--wide" href="#oferta">Desbloquear meu direcionamento</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- DEPOIMENTOS -->
+      <section class="section section--testimonials" id="depoimentos">
+        <div class="container">
+          <header class="section__head reveal-on-scroll">
+            <h2 class="section__title">Relatos de quem encontrou clareza</h2>
+          </header>
+          <div class="testimonials-grid">
+            <blockquote class="quote-card reveal-on-scroll">
+              <p>
+                “A leitura me trouxe clareza sobre o afastamento e me fez agir com mais consciência. Parecia conversar
+                com alguém que entendia o meu silêncio.”
+              </p>
+              <footer>— Mariana, 34</footer>
+            </blockquote>
+            <blockquote class="quote-card reveal-on-scroll">
+              <p>
+                “Eu estava presa no ciclo de mensagens e espera. O direcionamento me ajudou a respirar e escolher o que
+                era melhor para mim, sem drama.”
+              </p>
+              <footer>— Letícia, 29</footer>
+            </blockquote>
+            <blockquote class="quote-card reveal-on-scroll">
+              <p>
+                “Não é promessa milagrosa — é estrutura. Senti que finalmente tinha um plano emocional para atravessar
+                aqueles dias.”
+              </p>
+              <footer>— Camila, 41</footer>
+            </blockquote>
+          </div>
+        </div>
+      </section>
+
+      <!-- OFERTA -->
+      <section class="section section--offer" id="oferta">
+        <div class="container">
+          <div class="offer-grid">
+            <div class="offer-copy reveal-on-scroll">
+              <h2 class="section__title section__title--left">Seu mapa dos 21 dias</h2>
+              <p class="offer-lead">
+                Um direcionamento estratégico e emocional para atravessar esse momento com clareza.
+              </p>
+              <ul class="offer-list">
+                <li>Diagnóstico emocional</li>
+                <li>Janela ideal de aproximação</li>
+                <li>O que evitar</li>
+                <li>Estratégia personalizada</li>
+                <li>Plano prático</li>
+              </ul>
+            </div>
+            <div class="offer-box reveal-on-scroll">
+              <div class="price-block">
+                <span class="price-block__old">R$197</span>
+                <span class="price-block__now">R$97</span>
+              </div>
+              <button type="button" class="btn btn--primary btn--large" id="cta-checkout">
+                Receber meu mapa agora
+              </button>
+              <!-- Substitua por <a href="URL_DO_CHECKOUT" class="btn ..."> ou adicione redirecionamento no clique. -->
+              <p class="microcopy microcopy--center">Disponível apenas durante esta sessão</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- GARANTIA -->
+      <section class="section section--guarantee" id="garantia">
+        <div class="container container--narrow">
+          <div class="guarantee-box reveal-on-scroll">
+            <h2 class="section__title">Compromisso com sua clareza</h2>
+            <p>
+              Se após acessar o material você não sentir direção real sobre seus próximos passos, devolvemos
+              integralmente.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- FAQ -->
+      <section class="section section--faq" id="faq">
+        <div class="container container--narrow">
+          <h2 class="section__title reveal-on-scroll">Perguntas frequentes</h2>
+          <div class="faq" id="faq-accordion">
+            <details class="faq__item reveal-on-scroll">
+              <summary>Isso realmente funciona?</summary>
+              <p>
+                O método combina leitura emocional estruturada com um plano de ação. Funciona quando você está aberta a
+                enxergar o relacionamento com honestidade — não como garantia, mas como ferramenta de clareza.
+              </p>
+            </details>
+            <details class="faq__item reveal-on-scroll">
+              <summary>Preciso ter contato com ele?</summary>
+              <p>
+                Não. A consulta parte do seu momento e da dinâmica entre vocês, mesmo em silêncio ou distância. O foco é
+                o que você pode fazer com consciência.
+              </p>
+            </details>
+            <details class="faq__item reveal-on-scroll">
+              <summary>Quanto tempo leva?</summary>
+              <p>
+                A leitura inicial é imediata. O mapa dos 21 dias é organizado para leitura em etapas — você avança no seu
+                ritmo, com orientações claras para cada fase.
+              </p>
+            </details>
+            <details class="faq__item reveal-on-scroll">
+              <summary>Como recebo o mapa?</summary>
+              <p>
+                Após a confirmação do acesso, você recebe o material digital por e-mail, com link seguro para download e
+                consulta quando precisar.
+              </p>
+            </details>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container site-footer__inner">
+        <span class="logo logo--small">Amor da Lua</span>
+        <p class="site-footer__note">Consulta privada · Experiência premium</p>
+      </div>
+    </footer>
+
+    <script src="app.js"></script>
+  </body>
+</html>
