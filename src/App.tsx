@@ -19,7 +19,7 @@ import {
 import { cardBackForSlot, HERO_DECK_IMAGES } from './deckImages';
 
 const WHATSAPP_URL =
-  'https://wa.me/559992116558?text=Quero%20saber%20mais!';
+  'https://api.whatsapp.com/send?phone=559992116558&text=Quero%20saber%20mais!';
 
 type Bundle = {
   sentimento: { name: string; snippet: string };
@@ -100,7 +100,7 @@ const NARRATIVE_BUNDLES: Bundle[] = [
   },
 ];
 
-const LABELS = ['Sentimento', 'Bloqueio', 'Oportunidade'] as const;
+const LABELS = ['O que ele sente por você', 'O que está bloqueando', 'O caminho possível'] as const;
 const KEYS = ['sentimento', 'bloqueio', 'oportunidade'] as const;
 
 function pickBundle(): Bundle {
@@ -168,28 +168,28 @@ export default function App() {
           ? `Faltam ${3 - selectedOrder.length}. Cada carta que você encaixa aqui abre uma camada do que ele guarda.`
           : 'Combinação fechada. Quando você revelar, a leitura desce inteira — na ordem exata que você montou.';
 
-  useLayoutEffect(() => {
-    if (!resultVisible) return;
-    const el = document.getElementById('resultado');
-    el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }, [resultVisible]);
+  // Auto-scroll logic removed to avoid breaking emotional flow.
 
   const runReveal = useCallback(() => {
     if (selectedOrder.length !== 3 || phase !== 'select') return;
     setPhase('busy');
     setOverlayKey((k) => k + 1);
+    
+    // Step 2: Progress Bar / Interpretation Loading
     window.setTimeout(() => {
       setPhase('reveal');
       const b = pickBundle();
       setBundle(b);
       setFlipStep(0);
+      
+      // Step 3: Reveal cards one by one with 900ms delay
       window.setTimeout(() => setFlipStep(1), 0);
-      window.setTimeout(() => setFlipStep(2), 750);
-      window.setTimeout(() => setFlipStep(3), 1500);
+      window.setTimeout(() => setFlipStep(2), 900);
+      window.setTimeout(() => setFlipStep(3), 1800);
+      
       window.setTimeout(() => {
-        setResultVisible(true);
         setPhase('done');
-      }, 1500 + 900);
+      }, 1800 + 900);
     }, 3000);
   }, [phase, selectedOrder.length]);
 
@@ -221,15 +221,14 @@ export default function App() {
             className="fixed inset-0 z-[100] grid place-items-center bg-midnight-void/90 backdrop-blur-md px-6"
           >
             <div className="text-center max-w-sm space-y-6">
-              <p className="font-display text-xl md:text-2xl italic text-primary leading-snug">
-                Selando a sua combinação…
+              <p className="font-display text-xl md:text-2xl italic text-celestial-gold leading-snug">
+                Interpretando os sinais dessa conexão...
               </p>
-              <p className="text-sm text-stardust-white/65 leading-relaxed">
-                Poucas pessoas chegam até aqui com três cartas escolhidas com intenção. O que vem agora foi montado em
-                cima da sua escolha — não é texto genérico.
+              <p className="text-sm text-stardust-white/65 leading-relaxed italic">
+                "As cartas estão revelando aquilo que o silêncio dele esconde."
               </p>
               <div
-                className="h-1 rounded-full bg-primary/20 overflow-hidden"
+                className="h-1 rounded-full bg-celestial-gold/20 overflow-hidden"
                 role="progressbar"
                 aria-valuemin={0}
                 aria-valuemax={100}
@@ -237,7 +236,7 @@ export default function App() {
               >
                 <motion.div
                   key={overlayKey}
-                  className="h-full bg-primary rounded-full"
+                  className="h-full bg-celestial-gold rounded-full"
                   initial={{ width: '0%' }}
                   animate={{ width: '100%' }}
                   transition={{ duration: 3, ease: 'linear' }}
@@ -474,23 +473,50 @@ export default function App() {
             )}
           </div>
           
-          <div className="mt-20 space-y-8 max-w-2xl mx-auto">
-            <div className="glass-card p-8 rounded-[24px] border-l-4 border-l-warm-amber text-left">
-              <p className="text-on-surface leading-relaxed">
-                A conexão não foi encerrada, apenas silenciada. O que as cartas mostram é que existe um fio invisível que ainda vibra quando um de vocês pensa no outro. Mas atenção: o tempo é o maior inimigo da reconexão.
-              </p>
-            </div>
+          {phase === 'done' && (
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5, duration: 0.8 }}
+              className="mt-20 space-y-12 max-w-2xl mx-auto"
+            >
+              <div className="space-y-6 text-center">
+                <h3 className="text-2xl font-display font-bold text-on-surface">O que as cartas revelam sobre vocês</h3>
+                <div className="space-y-4 text-on-surface-variant leading-relaxed text-lg">
+                  <p>As cartas mostram que essa conexão ainda carrega movimento emocional. Existe algo não encerrado entre vocês.</p>
+                  <p>Mas também existe um bloqueio que precisa ser compreendido com clareza.</p>
+                  <p className="font-semibold text-on-surface">A questão agora não é descobrir se ele ainda sente.</p>
+                  <p>A questão é saber como agir sem transformar essa abertura em encerramento definitivo.</p>
+                </div>
+              </div>
 
-            <div className="bg-[#1E0E0E]/60 border border-[#93000A]/30 p-6 rounded-[24px] flex gap-4 items-start text-left">
-              <AlertCircle className="text-[#ffb4ab] shrink-0 mt-1" size={20} />
-              <div className="space-y-1">
-                <span className="text-[11px] font-bold text-[#ffb4ab] uppercase tracking-widest block">Alerta de Oportunidade</span>
-                <p className="text-sm text-[#ffdad6] leading-relaxed">
-                  Existe uma abertura. Por enquanto. A energia flui agora, mas pode se fechar se você não agir.
+              <div className="bg-[#1E0E0E]/60 border border-[#93000A]/30 p-8 rounded-[24px] flex gap-4 items-start text-left shadow-2xl">
+                <AlertCircle className="text-[#ffb4ab] shrink-0 mt-1" size={24} />
+                <div className="space-y-2">
+                  <span className="text-xs font-bold text-[#ffb4ab] uppercase tracking-[0.2em] block">⚠ Janela emocional identificada</span>
+                  <p className="text-base text-[#ffdad6] leading-relaxed">
+                    As cartas indicam abertura emocional ativa nos próximos dias. Uma atitude precipitada pode fechar essa abertura.
+                  </p>
+                </div>
+              </div>
+
+              <div className="pt-8 flex flex-col items-center gap-4">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setResultVisible(true);
+                    setTimeout(() => scrollToId('oferta'), 100);
+                  }}
+                  className="gold-gradient text-on-primary font-bold px-12 py-6 rounded-full shadow-2xl cta-glow w-full uppercase tracking-[0.2em] text-sm hover:scale-105 active:scale-95 transition-all duration-300"
+                >
+                  QUERO MEU DIRECIONAMENTO COMPLETO
+                </button>
+                <p className="text-[10px] text-on-surface-variant/40 uppercase tracking-[0.3em] font-bold">
+                  Clique para ver a estratégia completa de reconexão
                 </p>
               </div>
-            </div>
-          </div>
+            </motion.div>
+          )}
         </div>
       </section>
 
@@ -530,16 +556,18 @@ export default function App() {
               <span className="text-on-surface-variant/40 line-through text-lg">De R$ 197</span>
               <div className="flex items-baseline justify-center gap-2">
                 <span className="text-on-surface text-xl">por</span>
-                <span className="text-5xl md:text-6xl font-display font-bold text-celestial-gold">R$ 97</span>
+                <span className="text-5xl md:text-6xl font-display font-bold text-celestial-gold">R$ 39,90</span>
               </div>
             </div>
 
-            <button
-              type="button"
-              className="gold-gradient text-on-primary font-bold px-10 py-6 rounded-full shadow-2xl cta-glow w-full uppercase tracking-widest text-sm hover:scale-105 active:scale-95 transition-all duration-300"
+            <a
+              href={WHATSAPP_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="gold-gradient text-on-primary font-bold px-10 py-6 rounded-full shadow-2xl cta-glow w-full uppercase tracking-widest text-sm hover:scale-105 active:scale-95 transition-all duration-300 text-center"
             >
               QUERO MEU DIRECIONAMENTO AGORA
-            </button>
+            </a>
           </div>
         </section>
       )}
@@ -608,16 +636,18 @@ export default function App() {
               <span className="text-on-surface-variant/40 line-through text-xl">De R$ 197</span>
               <div className="flex items-baseline gap-2 mt-2 mb-8">
                 <span className="text-on-surface text-xl">por</span>
-                <span className="text-6xl font-display font-bold text-celestial-gold">R$ 97</span>
+                <span className="text-6xl font-display font-bold text-celestial-gold">R$ 39,90</span>
               </div>
 
               <div className="w-full space-y-4">
-                <button
-                  type="button"
-                  className="gold-gradient text-on-primary font-bold py-5 px-8 rounded-full w-full uppercase tracking-[0.2em] text-xs hover:brightness-110 active:scale-95 transition-all shadow-xl"
+                <a
+                  href={WHATSAPP_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="gold-gradient text-on-primary font-bold py-5 px-8 rounded-full w-full uppercase tracking-[0.2em] text-xs hover:brightness-110 active:scale-95 transition-all shadow-xl text-center"
                 >
                   LIBERAR MEU ACESSO
-                </button>
+                </a>
                 
                 <div className="flex items-center justify-center gap-2 text-[10px] text-on-surface-variant uppercase tracking-widest font-bold py-2">
                   <ShieldCheck size={14} className="text-celestial-gold" />
