@@ -19,7 +19,7 @@ import {
 import { cardBackForSlot, HERO_DECK_IMAGES } from './deckImages';
 
 const WHATSAPP_URL =
-  'https://api.whatsapp.com/send?phone=559992116558&text=Quero%20saber%20mais!';
+  'https://wa.me/14509135333?text=Quero%20saber%20Mais!';
 
 type Bundle = {
   sentimento: { name: string; snippet: string };
